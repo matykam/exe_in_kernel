@@ -3,7 +3,9 @@
 *экосистемы exe процессов*/
 
 #include <stdio.h>
-#include "sched.h"
+#include <sched.h>
+#include <linux/printk.h>
+#include <linux/kernel.h>
 const unsigned long startmaskid = 0x99999ul;
 const struct task_struct *start = &init_task;
 
@@ -19,25 +21,36 @@ struct exeprocess
     pid_t tgid;
     unsigned int exeflags;
     /* exeflags: 00000001-read,00000010-write,00000011-r/w,10000000-systemprogramm */
-    struct exeprocess *next;
-    struct exeprocess *prev;
+    struct exe_list_head{
+       struct exeprocess *next;
+       struct exeprocess *prev;
+        }
+    
 };
  struct exeprocess __lowexe__(){
-     struct exeprocess init;
-     init.exeid = init.pid + startmaskid;
-     init.exeflags = 128; /* flag-10000000*/
-
+     struct exeprocess einit;
+     einit.exeid = einit.pid + startmaskid;
+     einit.exeflags = 128; /* flag-10000000*/
+     printk(KERN_NOTICE "процесс initexe успешно был запущен/the process has been successfully launched");
  }
  
+ void exespace(){
+    
+ }
 
  void *__openprocexe__(int *addrprocexe){
     printf("%d \n ",*addrprocexe);
     return addrprocexe;
-}
+}             
  
  void *__closeprocexe__(int *addrprocexe){
     printf("%d \n",*addrprocexe);
     return addrprocexe;
+}
+
+void __startpoint__(char *path,unsigned long size,) {
+    printk(KERN_NOTICE "запуск точки входа exe_ecosystem");
+   __lowexe__();
 }
 
 typedef void*(call)(int*);
